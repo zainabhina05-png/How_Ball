@@ -1,0 +1,31 @@
+:root {
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --primary: #FF4500;
+  --secondary: #00FA9A;
+  --accent: #00BFFF;
+  --panel-bg: rgba(20, 20, 20, 0.85);
+  --font-main: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-main);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Created by Zaeb */
