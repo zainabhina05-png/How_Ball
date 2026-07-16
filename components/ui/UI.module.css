@@ -3,7 +3,8 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100vh; /* fallback */
+  height: 100dvh;
   pointer-events: none; /* Let clicks pass through unless on interactive elements */
   display: flex;
   flex-direction: column;
@@ -164,3 +165,24 @@
   .hudValue { font-size: 1.2rem; }
   .instructions { flex-direction: column; gap: 10px; }
 }
+
+.muteButton {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+  line-height: 1;
+  pointer-events: auto;
+}
+
+.muteButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+

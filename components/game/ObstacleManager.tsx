@@ -139,42 +139,96 @@ export default function ObstacleManager() {
     <group ref={groupRef}>
       {entities.map(ent => {
         if (ent.collected) return null;
-        
+
         const x = ent.lane * LANE_WIDTH;
 
         if (ent.type === 'coin') {
           return (
-            <mesh key={ent.id} position={[x, 0.5, ent.z]} rotation={[0, ent.z, 0]}>
-              <cylinderGeometry args={[0.3, 0.3, 0.1, 16]} />
-              <meshStandardMaterial color="#FFD700" emissive="#FFD700" emissiveIntensity={0.5} />
-            </mesh>
+            <group key={ent.id} position={[x, 0.6, ent.z]}>
+              {/* Spinning torus — much more coin-like than a flat cylinder */}
+              <mesh rotation={[Math.PI / 2, ent.z * 2, 0]}>
+                <torusGeometry args={[0.28, 0.08, 12, 24]} />
+                <meshStandardMaterial
+                  color="#FFD700"
+                  emissive="#FFA500"
+                  emissiveIntensity={1.2}
+                  metalness={0.9}
+                  roughness={0.1}
+                />
+              </mesh>
+              {/* Soft glow point light */}
+              <pointLight color="#FFD700" intensity={0.8} distance={3} />
+            </group>
           );
         }
 
         if (ent.type === 'low_obstacle') {
           return (
-            <mesh key={ent.id} position={[x, 0.5, ent.z]} castShadow>
-              <boxGeometry args={[2, 1, 1]} />
-              <meshStandardMaterial color="#FF4444" />
-            </mesh>
+            <group key={ent.id} position={[x, 0.5, ent.z]}>
+              {/* Main body — slightly rounded */}
+              <mesh castShadow>
+                <boxGeometry args={[2, 1, 0.9]} />
+                <meshStandardMaterial
+                  color="#CC2200"
+                  emissive="#FF2200"
+                  emissiveIntensity={0.35}
+                  metalness={0.3}
+                  roughness={0.6}
+                />
+              </mesh>
+              {/* Glowing stripe on top */}
+              <mesh position={[0, 0.55, 0]}>
+                <boxGeometry args={[2, 0.08, 0.9]} />
+                <meshStandardMaterial
+                  color="#FF6644"
+                  emissive="#FF4422"
+                  emissiveIntensity={2}
+                  metalness={0}
+                  roughness={0}
+                />
+              </mesh>
+              <pointLight color="#FF2200" intensity={0.6} distance={3} />
+            </group>
           );
         }
 
         if (ent.type === 'high_obstacle') {
           return (
             <group key={ent.id} position={[x, 0, ent.z]}>
-              <mesh position={[-0.8, 1, 0]} castShadow>
-                <boxGeometry args={[0.4, 2, 0.4]} />
-                <meshStandardMaterial color="#4444FF" />
+              {/* Left pillar */}
+              <mesh position={[-0.8, 1.1, 0]} castShadow>
+                <boxGeometry args={[0.35, 2.2, 0.35]} />
+                <meshStandardMaterial
+                  color="#1133CC"
+                  emissive="#2244FF"
+                  emissiveIntensity={0.6}
+                  metalness={0.7}
+                  roughness={0.2}
+                />
               </mesh>
-              <mesh position={[0.8, 1, 0]} castShadow>
-                <boxGeometry args={[0.4, 2, 0.4]} />
-                <meshStandardMaterial color="#4444FF" />
+              {/* Right pillar */}
+              <mesh position={[0.8, 1.1, 0]} castShadow>
+                <boxGeometry args={[0.35, 2.2, 0.35]} />
+                <meshStandardMaterial
+                  color="#1133CC"
+                  emissive="#2244FF"
+                  emissiveIntensity={0.6}
+                  metalness={0.7}
+                  roughness={0.2}
+                />
               </mesh>
-              <mesh position={[0, 2, 0]} castShadow>
-                <boxGeometry args={[2, 0.4, 0.4]} />
-                <meshStandardMaterial color="#4444FF" />
+              {/* Top crossbar */}
+              <mesh position={[0, 2.1, 0]} castShadow>
+                <boxGeometry args={[2, 0.35, 0.35]} />
+                <meshStandardMaterial
+                  color="#2244FF"
+                  emissive="#4466FF"
+                  emissiveIntensity={1.2}
+                  metalness={0.5}
+                  roughness={0.1}
+                />
               </mesh>
+              <pointLight color="#2244FF" intensity={0.8} distance={4} position={[0, 1, 0]} />
             </group>
           );
         }

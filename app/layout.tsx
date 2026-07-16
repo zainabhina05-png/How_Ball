@@ -22,7 +22,13 @@ export const metadata: Metadata = {
     siteName: "HOW BALL?",
     type: "website",
   },
-  icons: { icon: "/favicon.ico" },
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon.jpg', type: 'image/jpeg' },
+    ],
+    apple: '/favicon.jpg',
+  },
 };
 
 export default function RootLayout({

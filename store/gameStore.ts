@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import audioManager from '@/lib/audioManager';
 
 export type GameStatus = 'menu' | 'playing' | 'paused' | 'gameover';
 
@@ -48,23 +49,35 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setStatus: (status) => set({ status }),
 
-  startGame: () => set({
-    status: 'playing',
-    score: 0,
-    coins: 0,
-    level: 1,
-    lane: 0,
-    isJumping: false,
-    isSliding: false,
-    speed: INITIAL_SPEED,
-  }),
+  startGame: () => {
+    audioManager?.stopBgMusic();
+    audioManager?.startBgMusic();
+    set({
+      status: 'playing',
+      score: 0,
+      coins: 0,
+      level: 1,
+      lane: 0,
+      isJumping: false,
+      isSliding: false,
+      speed: INITIAL_SPEED,
+    });
+  },
 
-  pauseGame: () => set({ status: 'paused' }),
-  
-  resumeGame: () => set({ status: 'playing' }),
+  pauseGame: () => {
+    audioManager?.pauseBgMusic();
+    set({ status: 'paused' });
+  },
+
+  resumeGame: () => {
+    audioManager?.resumeBgMusic();
+    set({ status: 'playing' });
+  },
 
   gameOver: () => {
     const { score, highScore } = get();
+    audioManager?.stopBgMusic();
+    audioManager?.playSfx('gameover');
     if (score > highScore) {
       set({ highScore: Math.floor(score) });
       if (typeof window !== 'undefined') {
@@ -80,6 +93,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   jump: () => {
     const { isJumping, isSliding } = get();
     if (!isJumping && !isSliding) {
+      audioManager?.playSfx('jump');
       set({ isJumping: true });
     }
   },
@@ -89,6 +103,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   slide: () => {
     const { isJumping, isSliding } = get();
     if (!isJumping && !isSliding) {
+      audioManager?.playSfx('slide');
       set({ isSliding: true });
     }
   },
@@ -112,6 +127,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   }),
 
   addCoin: () => set((state) => {
+    audioManager?.playSfx('coin');
     const newCoins = state.coins + 1;
     if (typeof window !== 'undefined') {
       const totalCoins = parseInt(localStorage.getItem('howBallTotalCoins') || '0', 10) + 1;

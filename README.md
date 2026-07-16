@@ -1,16 +1,15 @@
 <div align="center">
-  
-<img width="1042" height="502" alt="image" src="https://github.com/user-attachments/assets/586f15c0-62da-4fa9-99bd-f388d928be0a" />
 
 # 🎮 How Ball
 
 ### *A Fast-Paced 3D Endless Runner Game*
 
 [![Live Demo](https://img.shields.io/badge/🎮_Live_Demo-Play_Now-brightgreen?style=for-the-badge&logoColor=white)](https://how-ball.vercel.app)
-[![Next.js](https://img.shields.io/badge/Next.js-15.1.4-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React Three Fiber](https://img.shields.io/badge/React_Three_Fiber-3D-blue?style=flat-square&logo=three.js)](https://docs.pmnd.rs/react-three-fiber)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Zustand](https://img.shields.io/badge/Zustand-State-purple?style=flat-square)](https://zustand-demo.pmnd.rs/)
+[![Tests](https://img.shields.io/badge/Tests-Vitest-6E9F18?style=flat-square)](https://vitest.dev/)
 
 <p align="center">
   <strong>Guide your ball through an endless 3D road, dodge obstacles, and beat your high score!</strong>
@@ -29,20 +28,24 @@
 <td width="50%">
 
 ### 🎮 Gameplay
-- **Smooth 3D Physics** - Realistic ball movement
-- **Infinite Road** - Endless scrolling gameplay
-- **Dynamic Obstacles** - Randomly generated challenges
-- **Score Tracking** - Beat your personal best
+- **Smooth 3D Physics** — Realistic ball movement and rolling
+- **Infinite Road** — Endless scrolling with level-based themes
+- **Dynamic Obstacles** — Randomly generated, glowing low/high barriers
+- **Coins** — Spinning gold torus coins with emissive glow
+- **Score & High Score** — Persisted to localStorage
+- **Pause / Resume** — Esc or P at any time
 
 </td>
 <td width="50%">
 
 ### 🛠️ Technical
-- **Next.js 15** - Modern React framework
-- **React Three Fiber** - 3D rendering
-- **Zustand** - Lightweight state management
-- **TypeScript** - Type-safe development
-- **Responsive** - Works on all devices
+- **Next.js 16** — Modern React framework with App Router
+- **React Three Fiber** — 3D WebGL rendering
+- **Zustand** — Lightweight global state
+- **TypeScript** — Fully typed codebase
+- **Vitest** — Automated test suite (22 tests, CI-enforced)
+- **Web Audio API** — Procedural SFX + ambient music
+- **Responsive** — Portrait-safe camera on all phone sizes
 
 </td>
 </tr>
@@ -56,12 +59,13 @@
 |---------|--------|
 | ⬅️ **Left Arrow / A** | Move ball left |
 | ➡️ **Right Arrow / D** | Move ball right |
-| ⬆️ **Up Arrow / W / Space** | Jump |
-| ⬇️ **Down Arrow / S** | Slide |
-| ⏸️ **Esc / P** | Pause/Resume game |
-| 📱 **Touch/Swipe** | Mobile controls (all four directions) |
+| ⬆️ **Up Arrow / W / Space** | Jump (clears low obstacles) |
+| ⬇️ **Down Arrow / S** | Slide (avoids high obstacles) |
+| ⏸️ **Esc / P** | Pause / Resume game |
+| 🔊 **Mute button (HUD)** | Toggle sound on/off (persisted) |
+| 📱 **Touch / Swipe** | All four directions supported on mobile |
 
-**Objective:** Avoid obstacles and survive as long as possible!
+**Objective:** Avoid obstacles and survive as long as possible while collecting coins!
 
 ---
 
@@ -69,7 +73,7 @@
 
 ### Prerequisites
 - Node.js 18+ installed
-- npm or yarn package manager
+- npm package manager
 
 ### Installation
 
@@ -82,8 +86,6 @@ cd How_Ball
 
 # Install dependencies
 npm install
-# or
-yarn install
 ```
 
 ### Running Locally
@@ -91,19 +93,22 @@ yarn install
 ```bash
 # Start development server
 npm run dev
-# or
-yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to play!
 
+### Run Tests
+
+```bash
+npm test
+```
+
+The test suite covers all game logic in `store/gameStore.ts` (22 tests via Vitest). Tests are also enforced automatically on every push/PR via GitHub Actions CI.
+
 ### Build for Production
 
 ```bash
-# Create optimized production build
 npm run build
-
-# Start production server
 npm start
 ```
 
@@ -113,12 +118,14 @@ npm start
 
 | Technology | Purpose |
 |------------|---------|
-| **Next.js 15** | React framework with App Router |
-| **React Three Fiber** | 3D graphics rendering |
+| **Next.js 16** | React framework with App Router |
+| **React Three Fiber** | 3D WebGL rendering |
 | **Three.js** | WebGL 3D library |
-| **Zustand** | Global state management |
+| **Zustand** | Global game state management |
 | **TypeScript** | Type safety and better DX |
 | **CSS Modules** | Component-scoped styling |
+| **Vitest** | Fast unit test runner |
+| **Web Audio API** | Procedural SFX + ambient music (no external files) |
 
 ---
 
@@ -127,50 +134,85 @@ npm start
 ```
 how-ball/
 ├── app/                    # Next.js App Router
-│   ├── page.tsx           # Main game page
-│   ├── layout.tsx         # Root layout
-│   └── globals.css        # Global styles
+│   ├── page.tsx            # Main game page
+│   ├── layout.tsx          # Root layout + metadata
+│   ├── globals.css         # Global styles
+│   └── icon.png            # 512×512 home-screen icon
 ├── components/
-│   ├── game/              # Game components
-│   │   ├── Ball.tsx       # Player ball
-│   │   ├── Road.tsx       # Infinite road
-│   │   ├── Scene.tsx      # 3D scene setup
-│   │   ├── ObstacleManager.tsx
-│   │   ├── GameManager.tsx
-│   │   └── InputManager.tsx
-│   └── ui/                # UI components
-│       └── UIOverlay.tsx  # Score & controls
+│   ├── game/               # Game components
+│   │   ├── Ball.tsx        # Player ball (tier-based visual)
+│   │   ├── Road.tsx        # Infinite scrolling road
+│   │   ├── Scene.tsx       # 3D scene + responsive camera
+│   │   ├── ObstacleManager.tsx  # Obstacles + coins + collision
+│   │   ├── GameManager.tsx # Score ticker
+│   │   ├── InputManager.tsx     # Keyboard + swipe + pause
+│   │   └── CanvasErrorBoundary.tsx  # WebGL error/context-loss fallback
+│   └── ui/                 # UI components
+│       ├── UIOverlay.tsx   # HUD, menus, pause screen
+│       └── UI.module.css   # Shared UI styles
+├── lib/
+│   └── audioManager.ts     # Web Audio procedural sound system
 ├── store/
-│   └── gameStore.ts       # Zustand state
-└── public/                # Static assets
+│   └── gameStore.ts        # Zustand state + all game actions
+├── __tests__/
+│   └── gameStore.test.ts   # 22 unit tests
+├── .github/workflows/
+│   └── test.yml            # CI: run tests on push/PR
+└── public/
+    └── favicon.jpg         # Custom ball favicon
 ```
 
 ---
 
-## 🎨 Game Features
+## 🎵 Audio System
 
-### Physics Engine
-- Realistic ball rolling mechanics
-- Smooth acceleration and deceleration
-- Collision detection system
+HOW BALL? uses a fully procedural audio system built on the **Web Audio API** — no audio files, no licensing concerns, zero additional bundle size.
 
-### Procedural Generation
-- Infinite road generation
-- Random obstacle placement
-- Increasing difficulty over time
-
-### Visual Effects
-- 3D perspective camera
-- Dynamic lighting
-- Smooth animations
+- **Background Music** — Ambient multi-oscillator drone with LFO modulation, starts on game start, pauses when game pauses
+- **Jump SFX** — Short ascending sine tone
+- **Slide SFX** — Descending sawtooth sweep
+- **Coin SFX** — Two-tone "ding" in triangle wave
+- **Game Over SFX** — Descending minor chord
+- **Mute Toggle** — 🔊/🔇 button in HUD, preference saved to localStorage
+- **Fail-safe** — All audio operations are try/caught and fail silently on browsers that block autoplay or lack AudioContext (e.g., some mobile environments)
 
 ---
-### Screenshots:
 
-<img width="622" height="517" alt="image" src="https://github.com/user-attachments/assets/efd47228-8596-4dae-b8a6-1d955a5024c2" />
+## 📱 Mobile Support
 
+The camera dynamically adjusts its field of view based on the device aspect ratio, ensuring all three lanes stay visible on portrait phones down to **360px wide** (covering iPhone SE, most Android devices). The viewport uses `100dvh` (dynamic viewport height) to prevent mobile browser chrome from clipping the canvas.
 
-<img width="600" height="655" alt="image" src="https://github.com/user-attachments/assets/754aa171-6a5a-413f-ab04-81aa3c6f9132" />
+An error boundary handles WebGL context loss (common when Safari iOS reclaims GPU memory) — showing a friendly "refresh" panel instead of a blank/frozen screen.
+
+---
+
+## 🧪 Tests
+
+22 unit tests cover all core logic in `store/gameStore.ts`:
+
+| Test group | Coverage |
+|------------|----------|
+| `addScore` | Score increment, level-up at 500pts, speed cap at MAX_SPEED |
+| `jump/slide` | Mutual exclusion, can't jump while sliding and vice versa |
+| `gameOver` | High score update logic, localStorage persistence |
+| `pauseGame/resumeGame` | Status transitions |
+| `moveLeft/moveRight` | Lane clamping at ±1 |
+
+Run locally: `npm test`  
+Enforced in CI via GitHub Actions on every push/PR.
+
+---
+
+## 🎨 Visual Design
+
+- **Ball** — Evolves through 3 tiers as you collect coins: orange → green metallic → glowing cyan
+- **Coins** — Spinning gold tori with emissive glow and point light
+- **Low Obstacles** — Red barrier blocks with glowing stripe and warm point light
+- **High Obstacles** — Blue neon gate pillars with emissive crossbar and cool point light
+- **Road** — Level-themed color palette cycling through Day → Sunset → Dusk → Night → Neon
+- **UI** — Glassmorphism panels with backdrop blur, gradient text, smooth slide-up animation
+
+---
 
 ## 🤝 Contributing
 
@@ -203,6 +245,7 @@ This project is open source and available under the [MIT License](LICENSE).
 - Built with [Next.js](https://nextjs.org/)
 - 3D rendering powered by [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
 - State management with [Zustand](https://zustand-demo.pmnd.rs/)
+- Tests powered by [Vitest](https://vitest.dev/)
 
 ---
 
