@@ -1,4 +1,15 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# How Ball - 3D Ball Rolling Game
+
+A fun and addictive 3D ball rolling game built with Next.js, React Three Fiber, and Zustand. Navigate your ball through an endless road filled with obstacles and aim for the highest score!
+
+## Features
+
+- 🎮 Smooth 3D physics-based ball control
+- 🛣️ Infinite scrolling road system
+- 🎯 Dynamic obstacle spawning
+- 💯 Real-time score tracking
+- 📱 Touch and keyboard controls
+- 🎨 Modern UI with React Three Fiber
 
 ## Getting Started
 
