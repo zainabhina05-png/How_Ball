@@ -31,7 +31,8 @@ export interface GameState {
   setHighScore: (score: number) => void;
 }
 
-const INITIAL_SPEED = 10;
+const INITIAL_SPEED = process.env.NEXT_PUBLIC_INITIAL_SPEED ? Number(process.env.NEXT_PUBLIC_INITIAL_SPEED) : 10;
+const MAX_SPEED = process.env.NEXT_PUBLIC_MAX_SPEED ? Number(process.env.NEXT_PUBLIC_MAX_SPEED) : 15;
 const SPEED_INCREMENT = 1;
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -100,7 +101,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     let newSpeed = state.speed;
     
     if (newLevel > state.level) {
-      newSpeed = INITIAL_SPEED + (newLevel - 1) * SPEED_INCREMENT;
+      newSpeed = Math.min(INITIAL_SPEED + (newLevel - 1) * SPEED_INCREMENT, MAX_SPEED);
     }
 
     return { 
@@ -131,4 +132,3 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setHighScore: (score) => set({ highScore: score }),
 }));
-/* Created by Zaeb */

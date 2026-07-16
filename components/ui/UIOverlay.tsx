@@ -87,13 +87,34 @@ export function GameOverScreen() {
   );
 }
 
+export function PauseScreen() {
+  const resumeGame = useGameStore((state) => state.resumeGame);
+
+  return (
+    <div className={styles.overlay}>
+      <div className={styles.glassPanel}>
+        <h1 className={styles.title}>PAUSED</h1>
+        
+        <button className={styles.button} onClick={resumeGame}>
+          Resume
+        </button>
+
+        <div className={styles.instructions}>
+          <span>Press <span className={styles.keyHint}>Esc</span> or <span className={styles.keyHint}>P</span> to resume</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function UIOverlay() {
   const status = useGameStore((state) => state.status);
 
   return (
     <>
-      {status === 'playing' && <HUD />}
+      {(status === 'playing' || status === 'paused') && <HUD />}
       {status === 'menu' && <MainMenu />}
+      {status === 'paused' && <PauseScreen />}
       {status === 'gameover' && <GameOverScreen />}
     </>
   );

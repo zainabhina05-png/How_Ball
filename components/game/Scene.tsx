@@ -1,7 +1,7 @@
 'use client';
 
 import { Canvas } from '@react-three/fiber';
-import { PerspectiveCamera, Sky } from '@react-three/drei';
+import { PerspectiveCamera } from '@react-three/drei';
 import { useGameStore } from '@/store/gameStore';
 import Ball from './Ball';
 import Road from './Road';
@@ -48,4 +48,3 @@ export default function Scene() {
     </div>
   );
 }
-/* Created by Zaeb */

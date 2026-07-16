@@ -90,4 +90,3 @@ export default function Ball() {
     </mesh>
   );
 }
-/* Created by Zaeb */

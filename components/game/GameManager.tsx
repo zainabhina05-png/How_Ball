@@ -17,4 +17,3 @@ export default function GameManager() {
 
   return null;
 }
-/* Created by Zaeb */

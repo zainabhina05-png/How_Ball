@@ -61,4 +61,3 @@ export default function Road() {
     </group>
   );
 }
-/* Created by Zaeb */

@@ -56,8 +56,10 @@
 |---------|--------|
 | ⬅️ **Left Arrow / A** | Move ball left |
 | ➡️ **Right Arrow / D** | Move ball right |
-| 📱 **Touch/Swipe** | Mobile controls |
-| **Spacebar** | Restart game |
+| ⬆️ **Up Arrow / W / Space** | Jump |
+| ⬇️ **Down Arrow / S** | Slide |
+| ⏸️ **Esc / P** | Pause/Resume game |
+| 📱 **Touch/Swipe** | Mobile controls (all four directions) |
 
 **Objective:** Avoid obstacles and survive as long as possible!
 

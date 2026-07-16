@@ -9,6 +9,8 @@ export default function InputManager() {
   const moveRight = useGameStore((state) => state.moveRight);
   const jump = useGameStore((state) => state.jump);
   const slide = useGameStore((state) => state.slide);
+  const pauseGame = useGameStore((state) => state.pauseGame);
+  const resumeGame = useGameStore((state) => state.resumeGame);
 
   // Swipe detection refs
   const touchStart = useRef<{x: number, y: number} | null>(null);
@@ -82,6 +84,20 @@ export default function InputManager() {
     };
   }, [status, moveLeft, moveRight, jump, slide]);
 
+  useEffect(() => {
+    const handlePauseToggle = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.key === 'p' || e.key === 'P') {
+        if (status === 'playing') {
+          pauseGame();
+        } else if (status === 'paused') {
+          resumeGame();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handlePauseToggle);
+    return () => window.removeEventListener('keydown', handlePauseToggle);
+  }, [status, pauseGame, resumeGame]);
+
   return null;
 }
-/* Created by Zaeb */

@@ -184,4 +184,3 @@ export default function ObstacleManager() {
     </group>
   );
 }
-/* Created by Zaeb */
