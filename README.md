@@ -1,4 +1,6 @@
 <div align="center">
+  
+<img width="1042" height="502" alt="image" src="https://github.com/user-attachments/assets/586f15c0-62da-4fa9-99bd-f388d928be0a" />
 
 # 🎮 How Ball
 
@@ -84,8 +86,6 @@ yarn install
 
 ### Running Locally
 
-### Running Locally
-
 ```bash
 # Start development server
 npm run dev
@@ -163,6 +163,12 @@ how-ball/
 - Smooth animations
 
 ---
+### Screenshots:
+
+<img width="622" height="517" alt="image" src="https://github.com/user-attachments/assets/efd47228-8596-4dae-b8a6-1d955a5024c2" />
+
+
+<img width="600" height="655" alt="image" src="https://github.com/user-attachments/assets/754aa171-6a5a-413f-ab04-81aa3c6f9132" />
 
 ## 🤝 Contributing
 
