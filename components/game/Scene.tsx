@@ -35,6 +35,7 @@ function ResponsiveCamera() {
     const aspect = viewport.aspect; // updated by R3F on resize
     
     // Lock FOV to 60 to prevent wide-angle fisheye distortion
+    // @ts-expect-error PerspectiveCamera has fov
     camera.fov = 60;
     
     // Calculate what the visible half-width would be at the base distance
