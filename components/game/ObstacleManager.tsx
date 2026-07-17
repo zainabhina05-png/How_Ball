@@ -54,8 +54,9 @@ export default function ObstacleManager() {
     let hitObstacle = false;
     let coinsToCollect = 0;
 
-    // 1. Spawning Logic
-    const spawnInterval = Math.max(0.5, 15 / speed); 
+    // Spawn interval scales inversely with speed.
+    // At MAX_SPEED (35): 15/35 ≈ 0.43s → floor at 0.35s keeps spacing ≥ 12.25 world units, fair at top speed.
+    const spawnInterval = Math.max(0.35, 15 / speed); 
     spawnTimer.current += delta;
 
     if (spawnTimer.current >= spawnInterval) {

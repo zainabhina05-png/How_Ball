@@ -9,6 +9,11 @@ import ObstacleManager from './ObstacleManager';
 import GameManager from './GameManager';
 import CanvasErrorBoundary from './CanvasErrorBoundary';
 
+const INITIAL_SPEED = 10;
+const MAX_SPEED = 35;
+// Max additional FOV degrees added at top speed
+const MAX_FOV_WARP = 12.5;
+
 const LANE_WIDTH = 3;
 // We need all 3 lanes (±LANE_WIDTH world units) plus ball radius + obstacle margin
 const HALF_WIDTH_NEEDED = LANE_WIDTH * 1.6; // ~4.8 world units
@@ -30,16 +35,22 @@ const CAMERA_Y = 4;
  */
 function ResponsiveCamera() {
   const { camera, viewport } = useThree();
+  const speed = useGameStore((state) => state.speed);
 
   useEffect(() => {
     const aspect = viewport.aspect; // updated by R3F on resize
     
-    // Lock FOV to 60 to prevent wide-angle fisheye distortion
-    // @ts-expect-error PerspectiveCamera has fov
-    camera.fov = 60;
+    // Dynamic FOV warp: range from 60 (initial) to 72.5 (max speed)
+    // This creates a classic "speed warp" effect as the game intensifies
+    const speedProgress = Math.max(0, Math.min(1, (speed - INITIAL_SPEED) / (MAX_SPEED - INITIAL_SPEED)));
+    const dynamicFov = 60 + speedProgress * MAX_FOV_WARP;
     
-    // Calculate what the visible half-width would be at the base distance
-    const baseHalfWidth = CAMERA_Z * Math.tan((60 / 2) * (Math.PI / 180)) * aspect;
+    // @ts-expect-error PerspectiveCamera has fov
+    camera.fov = dynamicFov;
+    
+    // Calculate what the visible half-width would be at the base distance with the current FOV
+    // We use the dynamic FOV here so the position scaling stays correct on mobile at all speeds
+    const baseHalfWidth = CAMERA_Z * Math.tan((dynamicFov / 2) * (Math.PI / 180)) * aspect;
     
     // If the base width isn't enough to cover our required width (e.g. on portrait mobile),
     // scale the camera backward and upward to fit it, preserving perspective framing.
@@ -48,7 +59,7 @@ function ResponsiveCamera() {
     camera.position.set(0, CAMERA_Y * scale, CAMERA_Z * scale);
     camera.rotation.x = -0.2;
     camera.updateProjectionMatrix();
-  }, [camera, viewport.aspect]);
+  }, [camera, viewport.aspect, speed]);
 
   return null;
 }

@@ -170,6 +170,32 @@ class AudioManager {
     this.bgGainNode = null;
   }
 
+  // ─── Dynamic Speed ────────────────────────────────────────────────────────
+
+  setSpeed(speed: number, maxSpeed: number, initialSpeed: number) {
+    if (!this.bgRunning || !this.ctx) return;
+    
+    // Calculate pitch multiplier (1.0 to 1.35) based on speed progress
+    const progress = Math.max(0, Math.min(1, (speed - initialSpeed) / (maxSpeed - initialSpeed)));
+    const pitchMultiplier = 1 + (progress * 0.35);
+    
+    const freqs = [110, 165, 220, 275];
+    let oscIndex = 0;
+    
+    for (let i = 0; i < this.bgOscillators.length; i++) {
+      // Even indices in the array are the main oscillators (odd are LFOs)
+      if (i % 2 === 0 && oscIndex < freqs.length) {
+        const osc = this.bgOscillators[i];
+        const baseFreq = freqs[oscIndex] + oscIndex * 0.3;
+        try {
+          // Smoothly glide to the new pitch over 0.1s to avoid pops
+          osc.frequency.linearRampToValueAtTime(baseFreq * pitchMultiplier, this.ctx.currentTime + 0.1);
+        } catch { /* ignore */ }
+        oscIndex++;
+      }
+    }
+  }
+
   // ─── Mute ─────────────────────────────────────────────────────────────────
 
   get muted() { return this._muted; }

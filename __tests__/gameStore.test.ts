@@ -16,6 +16,7 @@ vi.mock('@/lib/audioManager', () => ({
     pauseBgMusic: vi.fn(),
     resumeBgMusic: vi.fn(),
     toggleMute: vi.fn(),
+    setSpeed: vi.fn(),
     muted: false,
   },
 }));
@@ -75,20 +76,54 @@ describe('addScore', () => {
     expect(getState().level).toBe(3);
   });
 
-  it('increases speed when level goes up', () => {
+  it('starts at INITIAL_SPEED (10)', () => {
     getState().startGame();
-    const initialSpeed = getState().speed;
-    getState().addScore(500); // level 2
-    expect(getState().speed).toBeGreaterThan(initialSpeed);
+    expect(getState().speed).toBe(10);
   });
 
-  it('caps speed at MAX_SPEED (default 15)', () => {
+  it('speed is strictly greater than INITIAL_SPEED after scoring points', () => {
     getState().startGame();
-    // Add enough score to push through many levels
-    for (let i = 0; i < 50; i++) {
-      getState().addScore(1000);
+    getState().addScore(100);
+    expect(getState().speed).toBeGreaterThan(10);
+  });
+
+  it('speed increases monotonically with score', () => {
+    getState().startGame();
+    const speeds: number[] = [];
+    for (let i = 0; i < 20; i++) {
+      getState().addScore(500);
+      speeds.push(getState().speed);
     }
-    expect(getState().speed).toBeLessThanOrEqual(15);
+    for (let i = 1; i < speeds.length; i++) {
+      expect(speeds[i]).toBeGreaterThanOrEqual(speeds[i - 1]);
+    }
+  });
+
+  it('caps speed at MAX_SPEED (35)', () => {
+    getState().startGame();
+    // Add a huge score to push well past any ramp
+    for (let i = 0; i < 100; i++) {
+      getState().addScore(5000);
+    }
+    expect(getState().speed).toBeLessThanOrEqual(35);
+  });
+
+  it('speed at score=500 is between INITIAL and MAX (not too far, not too slow)', () => {
+    getState().startGame();
+    getState().addScore(500);
+    const speed = getState().speed;
+    // At score 500 with RAMP_RATE=2000: speed ≈ 10 + 25*(1 - e^(-0.25)) ≈ 15.5
+    expect(speed).toBeGreaterThan(10);
+    expect(speed).toBeLessThan(20);
+  });
+
+  it('speed at score=2000 is well past the halfway mark', () => {
+    getState().startGame();
+    getState().addScore(2000);
+    const speed = getState().speed;
+    // At score 2000 with RAMP_RATE=2000: speed ≈ 10 + 25*(1 - e^(-1)) ≈ 25.8
+    expect(speed).toBeGreaterThan(22);
+    expect(speed).toBeLessThan(35);
   });
 });
 

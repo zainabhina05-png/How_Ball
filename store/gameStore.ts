@@ -33,8 +33,8 @@ export interface GameState {
 }
 
 const INITIAL_SPEED = process.env.NEXT_PUBLIC_INITIAL_SPEED ? Number(process.env.NEXT_PUBLIC_INITIAL_SPEED) : 10;
-const MAX_SPEED = process.env.NEXT_PUBLIC_MAX_SPEED ? Number(process.env.NEXT_PUBLIC_MAX_SPEED) : 15;
-const SPEED_INCREMENT = 1;
+const MAX_SPEED = process.env.NEXT_PUBLIC_MAX_SPEED ? Number(process.env.NEXT_PUBLIC_MAX_SPEED) : 35;
+const RAMP_RATE = 2000;
 
 export const useGameStore = create<GameState>((set, get) => ({
   status: 'menu',
@@ -52,6 +52,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   startGame: () => {
     audioManager?.stopBgMusic();
     audioManager?.startBgMusic();
+    audioManager?.setSpeed(INITIAL_SPEED, MAX_SPEED, INITIAL_SPEED);
     set({
       status: 'playing',
       score: 0,
@@ -113,11 +114,15 @@ export const useGameStore = create<GameState>((set, get) => ({
   addScore: (points) => set((state) => {
     const newScore = state.score + points;
     const newLevel = Math.floor(newScore / 500) + 1;
-    let newSpeed = state.speed;
     
-    if (newLevel > state.level) {
-      newSpeed = Math.min(INITIAL_SPEED + (newLevel - 1) * SPEED_INCREMENT, MAX_SPEED);
-    }
+    // Continuous exponential speed curve
+    const newSpeed = Math.min(
+      MAX_SPEED, 
+      INITIAL_SPEED + (MAX_SPEED - INITIAL_SPEED) * (1 - Math.exp(-newScore / RAMP_RATE))
+    );
+    
+    // Dynamically adjust audio pitch based on speed
+    audioManager?.setSpeed(newSpeed, MAX_SPEED, INITIAL_SPEED);
 
     return { 
       score: newScore,
