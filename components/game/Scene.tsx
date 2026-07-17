@@ -39,9 +39,7 @@ function ResponsiveCamera() {
 
     // @ts-expect-error PerspectiveCamera has fov
     camera.fov = Math.max(60, vFovDeg);
-    // @ts-expect-error
     camera.position.set(0, CAMERA_Y, CAMERA_Z);
-    // @ts-expect-error
     camera.rotation.x = -0.2;
     camera.updateProjectionMatrix();
   }, [camera, viewport.aspect]);
