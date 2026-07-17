@@ -33,13 +33,18 @@ function ResponsiveCamera() {
 
   useEffect(() => {
     const aspect = viewport.aspect; // updated by R3F on resize
-    const hFovRad = 2 * Math.atan(HALF_WIDTH_NEEDED / CAMERA_Z);
-    const vFovRad = aspect < 1 ? hFovRad / aspect : hFovRad;
-    const vFovDeg = (vFovRad * 180) / Math.PI;
+    
+    // Lock FOV to 60 to prevent wide-angle fisheye distortion
+    camera.fov = 60;
+    
+    // Calculate what the visible half-width would be at the base distance
+    const baseHalfWidth = CAMERA_Z * Math.tan((60 / 2) * (Math.PI / 180)) * aspect;
+    
+    // If the base width isn't enough to cover our required width (e.g. on portrait mobile),
+    // scale the camera backward and upward to fit it, preserving perspective framing.
+    const scale = Math.max(1, HALF_WIDTH_NEEDED / baseHalfWidth);
 
-    // @ts-expect-error PerspectiveCamera has fov
-    camera.fov = Math.max(60, vFovDeg);
-    camera.position.set(0, CAMERA_Y, CAMERA_Z);
+    camera.position.set(0, CAMERA_Y * scale, CAMERA_Z * scale);
     camera.rotation.x = -0.2;
     camera.updateProjectionMatrix();
   }, [camera, viewport.aspect]);
