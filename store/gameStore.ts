@@ -32,9 +32,9 @@ export interface GameState {
   setHighScore: (score: number) => void;
 }
 
-const INITIAL_SPEED = process.env.NEXT_PUBLIC_INITIAL_SPEED ? Number(process.env.NEXT_PUBLIC_INITIAL_SPEED) : 10;
-const MAX_SPEED = process.env.NEXT_PUBLIC_MAX_SPEED ? Number(process.env.NEXT_PUBLIC_MAX_SPEED) : 35;
-const RAMP_RATE = 2000;
+const INITIAL_SPEED = process.env.NEXT_PUBLIC_INITIAL_SPEED ? Number(process.env.NEXT_PUBLIC_INITIAL_SPEED) : 15;
+const MAX_SPEED = process.env.NEXT_PUBLIC_MAX_SPEED ? Number(process.env.NEXT_PUBLIC_MAX_SPEED) : 50;
+const RAMP_RATE = 1000;
 
 export const useGameStore = create<GameState>((set, get) => ({
   status: 'menu',
