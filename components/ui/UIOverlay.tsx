@@ -100,7 +100,7 @@ export function GameOverScreen() {
   return (
     <div className={styles.overlay}>
       <div className={styles.glassPanel}>
-        <h1 className={styles.title} style={{ fontSize: '3rem', color: '#ff4444' }}>GAME OVER</h1>
+        <h1 className={styles.title} style={{ color: '#ff4444' }}>GAME OVER</h1>
 
         <div className={styles.scoreGrid}>
           <div className={styles.scoreItem}>
