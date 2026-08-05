@@ -73,13 +73,20 @@ export default function InputManager() {
       touchStart.current = null;
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      // Prevent default scrolling and rubber-banding when swiping
+      e.preventDefault();
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchstart', handleTouchStart, { passive: false });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
     window.addEventListener('touchend', handleTouchEnd);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
     };
   }, [status, moveLeft, moveRight, jump, slide]);
