@@ -39,6 +39,9 @@ import { useGameStore } from '@/store/gameStore';
 
 // ─── Helper ────────────────────────────────────────────────────────────────
 const getState = () => useGameStore.getState();
+const INITIAL_SPEED = 15;
+const MAX_SPEED = 50;
+
 const resetToMenu = () => {
   useGameStore.setState({
     status: 'menu',
@@ -49,7 +52,7 @@ const resetToMenu = () => {
     lane: 0,
     isJumping: false,
     isSliding: false,
-    speed: 10,
+    speed: INITIAL_SPEED,
   });
 };
 
@@ -76,15 +79,15 @@ describe('addScore', () => {
     expect(getState().level).toBe(3);
   });
 
-  it('starts at INITIAL_SPEED (10)', () => {
+  it('starts at INITIAL_SPEED (15)', () => {
     getState().startGame();
-    expect(getState().speed).toBe(10);
+    expect(getState().speed).toBe(INITIAL_SPEED);
   });
 
   it('speed is strictly greater than INITIAL_SPEED after scoring points', () => {
     getState().startGame();
     getState().addScore(100);
-    expect(getState().speed).toBeGreaterThan(10);
+    expect(getState().speed).toBeGreaterThan(INITIAL_SPEED);
   });
 
   it('speed increases monotonically with score', () => {
@@ -99,31 +102,31 @@ describe('addScore', () => {
     }
   });
 
-  it('caps speed at MAX_SPEED (35)', () => {
+  it('caps speed at MAX_SPEED (50)', () => {
     getState().startGame();
     // Add a huge score to push well past any ramp
     for (let i = 0; i < 100; i++) {
       getState().addScore(5000);
     }
-    expect(getState().speed).toBeLessThanOrEqual(35);
+    expect(getState().speed).toBeLessThanOrEqual(MAX_SPEED);
   });
 
   it('speed at score=500 is between INITIAL and MAX (not too far, not too slow)', () => {
     getState().startGame();
     getState().addScore(500);
     const speed = getState().speed;
-    // At score 500 with RAMP_RATE=2000: speed ≈ 10 + 25*(1 - e^(-0.25)) ≈ 15.5
-    expect(speed).toBeGreaterThan(10);
-    expect(speed).toBeLessThan(20);
+    // At score 500 with RAMP_RATE=1000: speed ≈ 15 + 35*(1 - e^(-0.5)) ≈ 28.7
+    expect(speed).toBeGreaterThan(INITIAL_SPEED);
+    expect(speed).toBeLessThan(MAX_SPEED);
   });
 
   it('speed at score=2000 is well past the halfway mark', () => {
     getState().startGame();
     getState().addScore(2000);
     const speed = getState().speed;
-    // At score 2000 with RAMP_RATE=2000: speed ≈ 10 + 25*(1 - e^(-1)) ≈ 25.8
-    expect(speed).toBeGreaterThan(22);
-    expect(speed).toBeLessThan(35);
+    // At score 2000 with RAMP_RATE=1000: speed ≈ 15 + 35*(1 - e^(-2)) ≈ 44.7 — close to cap
+    expect(speed).toBeGreaterThan(35);
+    expect(speed).toBeLessThanOrEqual(MAX_SPEED);
   });
 });
 
